@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
@@ -25,15 +26,20 @@ class DioApiClient implements APIClient {
   }
 
   Dio _createDio() {
-    return Dio(
-      BaseOptions(
-        baseUrl: baseURL,
-        connectTimeout: Duration(milliseconds: NetworkConstants.connectTimeout),
-        receiveTimeout: Duration(milliseconds: NetworkConstants.receiveTimeout),
-        sendTimeout: Duration(milliseconds: NetworkConstants.sendTimeout),
-        validateStatus: (status) => status != null,
-      ),
+    final baseOptions = BaseOptions(
+      baseUrl: baseURL,
+      connectTimeout: Duration(milliseconds: NetworkConstants.connectTimeout),
+      receiveTimeout: Duration(milliseconds: NetworkConstants.receiveTimeout),
+      validateStatus: (status) => status != null,
     );
+
+    // Only set sendTimeout for non-web platforms
+    // On web, sendTimeout cannot be used without a request body
+    if (!kIsWeb) {
+      baseOptions.sendTimeout = Duration(milliseconds: NetworkConstants.sendTimeout);
+    }
+
+    return Dio(baseOptions);
   }
 
   void _setupInterceptors() {
