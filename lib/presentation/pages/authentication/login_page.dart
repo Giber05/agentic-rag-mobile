@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_app/core/di/injection.dart';
 import 'package:mobile_app/core/router/router.gr.dart';
+import 'package:mobile_app/core/widgets/loading/loading_overlay.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/utils/responsive_utils.dart';
 import '../../cubits/authentication/auth_cubit.dart';
-import '../../cubits/authentication/auth_state.dart';
 
 /// Modern responsive login page with enhanced UX and animations
 /// Features:
@@ -137,10 +137,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   /// Build responsive layout for different screen sizes
   Widget _buildResponsiveLayout(BuildContext context) {
-    return ResponsiveBuilder(
-      mobile: _buildMobileLayout(context),
-      tablet: _buildTabletLayout(context),
-      desktop: _buildDesktopLayout(context),
+    return Stack(
+      children: [
+        ResponsiveBuilder(
+          mobile: _buildMobileLayout(context),
+          tablet: _buildTabletLayout(context),
+          desktop: _buildDesktopLayout(context),
+        ),
+
+        BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            return state is AuthLoading ? const Center(child: FUILoadingOverlay()) : const SizedBox.shrink();
+          },
+        ),
+      ],
     );
   }
 

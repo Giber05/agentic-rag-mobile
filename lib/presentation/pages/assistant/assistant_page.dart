@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_app/core/di/injection.dart';
+import 'package:mobile_app/core/router/router.gr.dart';
 
 import '../../cubits/assistant/assistant_cubit.dart';
 import '../../cubits/authentication/auth_cubit.dart';
@@ -72,33 +73,40 @@ class _AssistantPageState extends State<AssistantPage> with TickerProviderStateM
         // Initialize auth cubit for logout functionality
         BlocProvider(create: (context) => getIt<AuthCubit>()),
       ],
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        body: AnimatedBuilder(
-          animation: _fadeAnimation,
-          builder: (context, child) {
-            return Opacity(opacity: _fadeAnimation.value, child: child);
-          },
-          child: Builder(
-            builder: (context) {
-              return AssistantLayoutManager(
-                appBar: AssistantAppBar(
-                  showMenuButton: true,
-                  onMenuPressed: () => AssistantOptionsMenu.showQuickOptions(context),
-                  onOptionsPressed: () => AssistantOptionsMenu.showOptionsMenu(context),
-                ),
-                conversationArea: AssistantConversationArea(
-                  scrollController: _scrollController,
-                  onExampleQuestionTap: (question) => _handleExampleQuestion(question, context),
-                ),
-                inputArea: AssistantInputArea(
-                  messageController: _messageController,
-                  onMessageSubmit: (message) => _handleMessageSubmit(context, message),
-                  onTextChanged: _handleTextChanged,
-                  onScrollToBottom: _scrollToBottom,
-                ),
-              );
+      child: BlocListener<AuthCubit, AuthState>(
+        listener: (context, state) {
+          if (state is AuthUnauthenticated) {
+            context.router.replaceAll([const LoginRoute()]);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          body: AnimatedBuilder(
+            animation: _fadeAnimation,
+            builder: (context, child) {
+              return Opacity(opacity: _fadeAnimation.value, child: child);
             },
+            child: Builder(
+              builder: (context) {
+                return AssistantLayoutManager(
+                  appBar: AssistantAppBar(
+                    showMenuButton: true,
+                    onMenuPressed: () => AssistantOptionsMenu.showQuickOptions(context),
+                    onOptionsPressed: () => AssistantOptionsMenu.showOptionsMenu(context),
+                  ),
+                  conversationArea: AssistantConversationArea(
+                    scrollController: _scrollController,
+                    onExampleQuestionTap: (question) => _handleExampleQuestion(question, context),
+                  ),
+                  inputArea: AssistantInputArea(
+                    messageController: _messageController,
+                    onMessageSubmit: (message) => _handleMessageSubmit(context, message),
+                    onTextChanged: _handleTextChanged,
+                    onScrollToBottom: _scrollToBottom,
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

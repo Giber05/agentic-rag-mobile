@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../../../core/utils/validators.dart';
 import '../../cubits/authentication/auth_cubit.dart';
-import '../../cubits/authentication/auth_state.dart';
 import '../assistant/assistant_page.dart';
 
 @RoutePage()
