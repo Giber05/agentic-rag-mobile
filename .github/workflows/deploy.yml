@@ -25,6 +25,18 @@ jobs:
           flutter-version: "3.29.2"
           channel: "stable"
 
+      - name: Create environment file
+        run: |
+          cat > .env << 'EOF'
+          # Backend API Configuration
+          BASE_URL=http://localhost:8000
+          API_TIMEOUT=30000
+
+          # Environment
+          ENVIRONMENT=production
+          DEBUG=false
+          EOF
+
       - name: Install dependencies
         run: flutter pub get
 
