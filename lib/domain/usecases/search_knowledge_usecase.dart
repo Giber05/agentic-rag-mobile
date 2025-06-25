@@ -1,9 +1,12 @@
+import 'package:injectable/injectable.dart';
+
 import '../models/assistant_models.dart';
 import '../repositories/assistant_repository.dart';
 import '../../core/usecases/usecase.dart';
 import '../../core/utils/resource.dart';
 
 /// Usecase for searching knowledge in the vector database
+@injectable
 class SearchKnowledgeUsecase extends Usecase<SearchKnowledgeParams, List<KnowledgeSourceDomain>> {
   final AssistantRepository _repository;
 

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get_it/get_it.dart';
+import 'package:mobile_app/core/bloc/messenger/messanger_handler.dart';
+import 'package:mobile_app/core/bloc/messenger/messenger_cubit.dart';
+import 'package:mobile_app/core/router/router.dart';
 
 import 'core/di/injection.dart';
 import 'core/bloc/bloc_observer.dart';
-import 'presentation/bloc/assistant/assistant_cubit.dart';
-import 'presentation/bloc/auth/auth_cubit.dart';
-import 'presentation/bloc/auth/auth_state.dart';
-import 'presentation/pages/assistant_page.dart';
-import 'presentation/pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,51 +19,45 @@ void main() async {
 
   // Configure dependencies
   await configureDependencies();
-
-  runApp(const MyApp());
+  final appRouter = getIt<AppRouter>();
+  runApp(App(appRouter: appRouter));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  final AppRouter appRouter;
+  const App({super.key, required this.appRouter});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Intelligent AI Assistant',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.light),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark),
-        useMaterial3: true,
-      ),
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (context) => GetIt.instance<AuthCubit>()..checkAuthStatus()),
-          BlocProvider(create: (context) => GetIt.instance<AssistantCubit>()),
-        ],
-        child: const AuthWrapper(),
-      ),
+    return MaterialApp.router(
+      routerConfig: appRouter.config(),
+      theme: ThemeData(useMaterial3: false),
+      builder: (context, child) => _AppLevelProvider(appRouter: appRouter, child: child!),
     );
   }
 }
 
-class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({super.key});
+class _AppLevelProvider extends StatelessWidget {
+  final Widget child;
+  final AppRouter appRouter;
+  const _AppLevelProvider({required this.child, required this.appRouter});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
-      builder: (context, state) {
-        if (state is AuthChecking) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
-        } else if (state is AuthAuthenticated) {
-          return const AssistantPage();
-        } else {
-          return const LoginPage();
-        }
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => getIt<MessengerCubit>()),
+      ],
+      child: BlocListener<MessengerCubit, MessengerState>(
+        listener: (context, state) {
+          final context = appRouter.navigatorKey.currentContext;
+          if (context != null) {
+            FUIMessengerHandler.handle(context, state);
+          }
+          context?.read<MessengerCubit>().idle();
+        },
+        child: child,
+      ),
     );
   }
 }

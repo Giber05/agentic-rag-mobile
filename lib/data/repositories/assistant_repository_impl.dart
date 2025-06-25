@@ -9,7 +9,7 @@ import '../dto/assistant_dto.dart';
 import '../mapper/assistant_mapper.dart';
 
 /// Implementation of AssistantRepository using datasources and mappers
-@LazySingleton(as: AssistantRepository)
+@Injectable(as: AssistantRepository)
 class AssistantRepositoryImpl implements AssistantRepository {
   final AssistantDatasource _datasource;
 

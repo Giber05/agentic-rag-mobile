@@ -1,9 +1,12 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
+
 import '../repositories/auth_repository.dart';
 import '../../core/usecases/usecase.dart';
 import '../../core/utils/resource.dart';
 import '../../core/error/exceptions.dart';
 
+@injectable
 class LogoutUseCase extends UsecaseNoParams<Unit> {
   final AuthRepository repository;
 

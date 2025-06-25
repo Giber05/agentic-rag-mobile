@@ -1,10 +1,11 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import '../../../core/errors/failures.dart';
 import '../../../core/network/api_client.dart';
-import '../../../core/utils/api_result.dart';
 import '../../models/auth_models.dart';
 import '../abstract/auth_datasource.dart';
 
+@Injectable(as: AuthDatasource)
 class AuthDatasourceImpl implements AuthDatasource {
   final APIClient apiClient;
 

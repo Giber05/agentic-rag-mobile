@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../domain/entities/user.dart';
@@ -8,6 +9,7 @@ import '../../core/errors/failures.dart';
 import '../datasources/abstract/auth_datasource.dart';
 import '../models/auth_models.dart';
 
+@Injectable(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   final AuthDatasource datasource;
 

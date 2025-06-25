@@ -1,9 +1,12 @@
+import 'package:injectable/injectable.dart';
+
 import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
 import '../../core/usecases/usecase.dart';
 import '../../core/utils/resource.dart';
 import '../../core/error/exceptions.dart';
 
+@injectable
 class GetCurrentUserUseCase extends UsecaseNoParams<User> {
   final AuthRepository repository;
 

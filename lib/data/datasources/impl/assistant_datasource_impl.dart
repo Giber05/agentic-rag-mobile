@@ -6,7 +6,7 @@ import '../../../core/utils/api_result.dart';
 import '../../../core/network/api_client.dart';
 
 /// Concrete implementation of AssistantDatasource using API client
-@LazySingleton(as: AssistantDatasource)
+@Injectable(as: AssistantDatasource)
 class AssistantDatasourceImpl implements AssistantDatasource {
   final APIClient _apiClient;
 

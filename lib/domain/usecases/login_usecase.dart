@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:injectable/injectable.dart';
 import '../entities/auth_token.dart';
 import '../repositories/auth_repository.dart';
 import '../../core/usecases/usecase.dart';
 import '../../core/utils/resource.dart';
 import '../../core/error/exceptions.dart';
 
+@injectable
 class LoginUseCase extends Usecase<LoginParams, AuthToken> {
   final AuthRepository repository;
 

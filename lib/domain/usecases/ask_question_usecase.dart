@@ -1,9 +1,12 @@
+import 'package:injectable/injectable.dart';
+
 import '../models/assistant_models.dart';
 import '../repositories/assistant_repository.dart';
 import '../../core/usecases/usecase.dart';
 import '../../core/utils/resource.dart';
 
 /// Usecase for asking the intelligent assistant a question
+@injectable
 class AskQuestionUsecase extends Usecase<AskQuestionParams, AssistantAnswerDomain> {
   final AssistantRepository _repository;
 
