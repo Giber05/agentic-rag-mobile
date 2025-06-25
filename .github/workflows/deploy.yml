@@ -35,7 +35,7 @@ jobs:
           # Backend API Configuration
           BASE_URL=http://localhost:8000
           API_TIMEOUT=30000
-
+          
           # Environment
           ENVIRONMENT=production
           DEBUG=false
@@ -47,7 +47,7 @@ jobs:
       - name: Build web
         run: flutter build web --release --base-href "/agentic-rag-mobile/"
 
-            - name: Setup Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v4
         
       - name: Upload artifact
