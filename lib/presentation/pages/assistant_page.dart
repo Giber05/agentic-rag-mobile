@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 import '../bloc/assistant/assistant_cubit.dart';
 import '../bloc/auth/auth_cubit.dart';
@@ -29,7 +30,6 @@ class _AssistantPageState extends State<AssistantPage> with TickerProviderStateM
   void initState() {
     super.initState();
     _setupAnimations();
-    _initializeApp();
   }
 
   void _setupAnimations() {
@@ -43,12 +43,6 @@ class _AssistantPageState extends State<AssistantPage> with TickerProviderStateM
     _fadeController.forward();
   }
 
-  void _initializeApp() {
-    // Check health on app start
-    context.read<AssistantCubit>().checkHealth();
-    context.read<AssistantCubit>().loadMetrics();
-  }
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -59,17 +53,23 @@ class _AssistantPageState extends State<AssistantPage> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: AnimatedBuilder(
-        animation: _fadeAnimation,
-        builder: (context, child) {
-          return Opacity(opacity: _fadeAnimation.value, child: child);
-        },
-        child: ResponsiveBuilder(
-          mobile: _buildMobileLayout(context),
-          tablet: _buildTabletLayout(context),
-          desktop: _buildDesktopLayout(context),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => GetIt.instance<AssistantCubit>()..checkHealth()),
+        BlocProvider(create: (context) => GetIt.instance<AuthCubit>()),
+      ],
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: AnimatedBuilder(
+          animation: _fadeAnimation,
+          builder: (context, child) {
+            return Opacity(opacity: _fadeAnimation.value, child: child);
+          },
+          child: ResponsiveBuilder(
+            mobile: _buildMobileLayout(context),
+            tablet: _buildTabletLayout(context),
+            desktop: _buildDesktopLayout(context),
+          ),
         ),
       ),
     );
