@@ -24,7 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) : super(AuthInitial());
 
   Future<void> checkAuthStatus() async {
-    emit(AuthLoading());
+    emit(AuthChecking());
 
     final isLoggedIn = await authRepository.isLoggedIn();
     if (isLoggedIn) {

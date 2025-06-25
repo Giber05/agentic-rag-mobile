@@ -164,16 +164,16 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 16),
 
                       // Register Link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Don't have an account? ", style: TextStyle(color: Colors.grey[600])),
-                          TextButton(
-                            onPressed: _navigateToRegister,
-                            child: const Text('Sign Up', style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     Text("Don't have an account? ", style: TextStyle(color: Colors.grey[600])),
+                      //     TextButton(
+                      //       onPressed: _navigateToRegister,
+                      //       child: const Text('Sign Up', style: TextStyle(fontWeight: FontWeight.bold)),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),
