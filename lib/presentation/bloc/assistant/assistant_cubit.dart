@@ -22,13 +22,18 @@ class AssistantCubit extends Cubit<AssistantState> {
   final Logger _logger;
   final Uuid _uuid = const Uuid();
 
-  AssistantCubit()
-    : _askQuestionUsecase = GetIt.instance<AskQuestionUsecase>(),
-      _searchKnowledgeUsecase = GetIt.instance<SearchKnowledgeUsecase>(),
-      _getSuggestionsUsecase = GetIt.instance<GetSuggestionsUsecase>(),
-      _checkHealthUsecase = GetIt.instance<CheckHealthUsecase>(),
-      _logger = GetIt.instance<Logger>(),
-      super(const AssistantState());
+  AssistantCubit({
+    AskQuestionUsecase? askQuestionUsecase,
+    SearchKnowledgeUsecase? searchKnowledgeUsecase,
+    GetSuggestionsUsecase? getSuggestionsUsecase,
+    CheckHealthUsecase? checkHealthUsecase,
+    Logger? logger,
+  }) : _askQuestionUsecase = askQuestionUsecase ?? GetIt.instance<AskQuestionUsecase>(),
+       _searchKnowledgeUsecase = searchKnowledgeUsecase ?? GetIt.instance<SearchKnowledgeUsecase>(),
+       _getSuggestionsUsecase = getSuggestionsUsecase ?? GetIt.instance<GetSuggestionsUsecase>(),
+       _checkHealthUsecase = checkHealthUsecase ?? GetIt.instance<CheckHealthUsecase>(),
+       _logger = logger ?? GetIt.instance<Logger>(),
+       super(const AssistantState());
 
   /// Ask a question to the intelligent assistant with conversation flow
   Future<void> askQuestion(String question) async {
@@ -258,7 +263,7 @@ class AssistantCubit extends Cubit<AssistantState> {
     }
 
     try {
-      final result = await _getSuggestionsUsecase.execute(query.trim());
+      final result = await _getSuggestionsUsecase(query.trim());
 
       switch (result) {
         case Success<List<String>> success:

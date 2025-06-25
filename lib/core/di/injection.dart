@@ -56,8 +56,16 @@ Future<void> configureDependencies() async {
   getIt.registerFactory(() => LogoutUseCase(getIt<AuthRepository>()));
   getIt.registerFactory(() => GetCurrentUserUseCase(getIt<AuthRepository>()));
 
-  // BLoC - Use simplified constructor
-  getIt.registerFactory(() => AssistantCubit());
+  // BLoC - Provide dependencies explicitly
+  getIt.registerFactory(
+    () => AssistantCubit(
+      askQuestionUsecase: getIt<AskQuestionUsecase>(),
+      searchKnowledgeUsecase: getIt<SearchKnowledgeUsecase>(),
+      getSuggestionsUsecase: getIt<GetSuggestionsUsecase>(),
+      checkHealthUsecase: getIt<CheckHealthUsecase>(),
+      logger: getIt<Logger>(),
+    ),
+  );
   getIt.registerFactory(
     () => AuthCubit(
       loginUseCase: getIt<LoginUseCase>(),
