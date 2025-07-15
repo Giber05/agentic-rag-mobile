@@ -133,7 +133,7 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
                       Expanded(
                         child: RawKeyboardListener(
                           focusNode: FocusNode(),
-                          onKey: (event) {
+                          onKey: (RawKeyEvent event): KeyEventResult {
                             if (event is RawKeyDownEvent) {
                               if (event.logicalKey == LogicalKeyboardKey.enter) {
                                 if (event.isShiftPressed) {
