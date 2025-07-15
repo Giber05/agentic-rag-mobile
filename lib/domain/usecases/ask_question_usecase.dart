@@ -18,6 +18,7 @@ class AskQuestionUsecase extends Usecase<AskQuestionParams, AssistantAnswerDomai
       question: params.question,
       options: params.options,
       conversationHistory: params.conversationHistory,
+      mode: params.mode,
     ).asResource;
   }
 }
@@ -27,6 +28,12 @@ class AskQuestionParams {
   final String question;
   final RAGOptionsDomain? options;
   final List<Map<String, String>>? conversationHistory;
+  final String? mode; // Tool mode (e.g., "jira" for Search by Jira)
 
-  const AskQuestionParams({required this.question, this.options, this.conversationHistory});
+  const AskQuestionParams({
+    required this.question, 
+    this.options, 
+    this.conversationHistory,
+    this.mode,
+  });
 }

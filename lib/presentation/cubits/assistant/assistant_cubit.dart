@@ -84,6 +84,7 @@ class AssistantCubit extends Cubit<AssistantState> {
         question: question.trim(),
         options: const RAGOptionsDomain(citationStyle: 'numbered', maxSources: 5, responseFormat: 'markdown'),
         conversationHistory: _convertConversationToHistory(state.conversation),
+        mode: state.selectedMode,
       );
 
       final result = await _askQuestionUsecase(params);
@@ -369,6 +370,11 @@ class AssistantCubit extends Cubit<AssistantState> {
   /// Hide typing indicator
   void hideTyping() {
     emit(state.copyWith(status: AssistantStatus.initial, typingText: null));
+  }
+
+  /// Set the selected tool mode
+  void setMode(String? mode) {
+    emit(state.copyWith(selectedMode: mode));
   }
 
   /// Convert conversation messages to the format expected by the backend

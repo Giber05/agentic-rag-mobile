@@ -79,6 +79,7 @@ class AssistantState extends Equatable {
   final AssistantMetricsDomain? metrics;
   final DateTime? lastHealthCheck;
   final String? typingText; // For typing animation
+  final String? selectedMode; // Current selected tool mode
 
   const AssistantState({
     this.status = AssistantStatus.initial,
@@ -94,6 +95,7 @@ class AssistantState extends Equatable {
     this.metrics,
     this.lastHealthCheck,
     this.typingText,
+    this.selectedMode,
   });
 
   /// Copy with method for creating new states
@@ -111,6 +113,7 @@ class AssistantState extends Equatable {
     AssistantMetricsDomain? metrics,
     DateTime? lastHealthCheck,
     String? typingText,
+    String? selectedMode,
   }) {
     return AssistantState(
       status: status ?? this.status,
@@ -126,6 +129,7 @@ class AssistantState extends Equatable {
       metrics: metrics ?? this.metrics,
       lastHealthCheck: lastHealthCheck ?? this.lastHealthCheck,
       typingText: typingText ?? this.typingText,
+      selectedMode: selectedMode ?? this.selectedMode,
     );
   }
 
@@ -156,5 +160,6 @@ class AssistantState extends Equatable {
     metrics,
     lastHealthCheck,
     typingText,
+    selectedMode,
   ];
 }

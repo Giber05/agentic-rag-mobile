@@ -20,6 +20,7 @@ class AssistantRepositoryImpl implements AssistantRepository {
     required String question,
     RAGOptionsDomain? options,
     List<Map<String, String>>? conversationHistory,
+    String? mode,
   }) async {
     final optionsDto = options != null ? RAGOptionsDto(
           maxSources: options.maxSources,
@@ -32,6 +33,7 @@ class AssistantRepositoryImpl implements AssistantRepository {
       question: question,
       options: optionsDto,
       conversationHistory: conversationHistory,
+      mode: mode,
     );
 
     return AssistantMapper.toDomain(result.data);
