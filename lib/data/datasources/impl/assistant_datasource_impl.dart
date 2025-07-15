@@ -17,6 +17,7 @@ class AssistantDatasourceImpl implements AssistantDatasource {
     required String question,
     RAGOptionsDto? options,
     List<Map<String, String>>? conversationHistory,
+    String? mode,
   }) async {
     // Prepare request data
     final requestData = {
@@ -29,6 +30,7 @@ class AssistantDatasourceImpl implements AssistantDatasource {
           'response_format': options.responseFormat,
           'enable_streaming': options.enableStreaming,
         },
+      if (mode != null) 'mode': mode,
     };
 
     // Call the optimized RAG pipeline endpoint (80-90% cost savings)

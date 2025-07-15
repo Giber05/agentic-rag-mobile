@@ -8,6 +8,7 @@ abstract class AssistantDatasource {
     required String question,
     RAGOptionsDto? options,
     List<Map<String, String>>? conversationHistory,
+    String? mode,
   });
 
   /// Search for knowledge using semantic search

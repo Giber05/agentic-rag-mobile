@@ -8,6 +8,7 @@ abstract class AssistantRepository {
     required String question,
     RAGOptionsDomain? options,
     List<Map<String, String>>? conversationHistory,
+    String? mode,
   });
 
   /// Search for knowledge in the vector database

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../cubits/assistant/assistant_cubit.dart';
 import '../widgets/query_input_widget.dart';
 import '../widgets/suggestions_widget.dart';
+import '../widgets/tools_toggle_widget.dart';
 import '../../../../core/utils/responsive_utils.dart';
 
 /// Enhanced input area with suggestions and optimized rebuilds
@@ -43,6 +44,22 @@ class AssistantInputArea extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // Tools Toggle (optimized rebuild)
+          BlocBuilder<AssistantCubit, AssistantState>(
+            buildWhen: (previous, current) => previous.selectedMode != current.selectedMode,
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const ToolsToggleWidget(),
+                  ],
+                ),
+              );
+            },
+          ),
+
           // Suggestions (optimized rebuild)
           BlocBuilder<AssistantCubit, AssistantState>(
             buildWhen: (previous, current) => previous.suggestions != current.suggestions,
