@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../cubits/assistant/assistant_cubit.dart';
@@ -130,26 +131,44 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
 
                       // Text Field
                       Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          focusNode: _focusNode,
-                          enabled: !state.isProcessing,
-                          maxLines: null,
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: (_) {
-                            _submitQuery(context);
+                        child: RawKeyboardListener(
+                          focusNode: FocusNode(),
+                          onKey: (event) {
+                            if (event is RawKeyDownEvent) {
+                              if (event.logicalKey == LogicalKeyboardKey.enter) {
+                                if (event.isShiftPressed) {
+                                  // Shift+Enter: Insert new line
+                                  return KeyEventResult.handled;
+                                } else {
+                                  // Enter only: Submit the message
+                                  _submitQuery(context);
+                                  return KeyEventResult.handled;
+                                }
+                              }
+                            }
+                            return KeyEventResult.ignored;
                           },
-                          decoration: InputDecoration(
-                            hintText: state.isProcessing ? 'Processing your question...' : 'Ask me anything...',
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                            hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                          child: TextField(
+                            controller: _controller,
+                            focusNode: _focusNode,
+                            enabled: !state.isProcessing,
+                            maxLines: null,
+                            textInputAction: TextInputAction.newline,
+                            onTapOutside: (event) {
+                              _focusNode.unfocus();
+                            },
+                            decoration: InputDecoration(
+                              hintText: state.isProcessing ? 'Processing your question...' : 'Ask me anything...',
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                              hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                              ),
                             ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                           ),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                         ),
                       ),
 
