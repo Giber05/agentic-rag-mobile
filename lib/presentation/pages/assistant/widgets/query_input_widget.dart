@@ -10,13 +10,23 @@ class QueryInputWidget extends StatefulWidget {
   final void Function(String)? onSubmitted;
   final void Function(String)? onTextChanged;
 
-  const QueryInputWidget({super.key, this.controller, this.onSubmitted, this.onTextChanged});
+  const QueryInputWidget({
+    super.key,
+    this.controller,
+    this.onSubmitted,
+    this.onTextChanged,
+  });
 
   @override
   State<QueryInputWidget> createState() => _QueryInputWidgetState();
 }
 
-class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProviderStateMixin {
+class SubmitIntent extends Intent {
+  const SubmitIntent();
+}
+
+class _QueryInputWidgetState extends State<QueryInputWidget>
+    with TickerProviderStateMixin {
   late final TextEditingController _controller;
   late final FocusNode _focusNode;
   late final AnimationController _animationController;
@@ -28,12 +38,14 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
     _controller = widget.controller ?? TextEditingController();
     _focusNode = FocusNode();
 
-    _animationController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
 
     _controller.addListener(_onTextChanged);
   }
@@ -100,17 +112,23 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
               AnimatedBuilder(
                 animation: _scaleAnimation,
                 builder: (context, child) {
-                  return Transform.scale(scale: _scaleAnimation.value, child: child);
+                  return Transform.scale(
+                    scale: _scaleAnimation.value,
+                    child: child,
+                  );
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
                       color:
                           _focusNode.hasFocus
                               ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                              : Theme.of(
+                                context,
+                              ).colorScheme.outline.withOpacity(0.3),
                       width: _focusNode.hasFocus ? 2 : 1,
                     ),
                   ),
@@ -124,50 +142,66 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
                           color:
                               state.isProcessing
                                   ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.onSurfaceVariant,
+                                  : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                           size: 24,
                         ),
                       ),
 
                       // Text Field
                       Expanded(
-                        child: RawKeyboardListener(
-                          focusNode: FocusNode(),
-                          onKey: (RawKeyEvent event): KeyEventResult {
-                            if (event is RawKeyDownEvent) {
-                              if (event.logicalKey == LogicalKeyboardKey.enter) {
-                                if (event.isShiftPressed) {
-                                  // Shift+Enter: Insert new line
-                                  return KeyEventResult.handled;
-                                } else {
-                                  // Enter only: Submit the message
-                                  _submitQuery(context);
-                                  return KeyEventResult.handled;
-                                }
-                              }
-                            }
-                            return KeyEventResult.ignored;
+                        child: Shortcuts(
+                          shortcuts: <ShortcutActivator, Intent>{
+                            SingleActivator(
+                                  LogicalKeyboardKey.enter,
+                                  shift: false,
+                                ):
+                                const SubmitIntent(),
                           },
-                          child: TextField(
-                            controller: _controller,
-                            focusNode: _focusNode,
-                            enabled: !state.isProcessing,
-                            maxLines: null,
-                            textInputAction: TextInputAction.newline,
-                            onTapOutside: (event) {
-                              _focusNode.unfocus();
+                          child: Actions(
+                            actions: <Type, Action<Intent>>{
+                              SubmitIntent: CallbackAction<SubmitIntent>(
+                                onInvoke: (SubmitIntent intent) {
+                                  _submitQuery(context);
+                                  return null;
+                                },
+                              ),
                             },
-                            decoration: InputDecoration(
-                              hintText: state.isProcessing ? 'Processing your question...' : 'Ask me anything...',
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                              hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                            child: TextField(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              enabled: !state.isProcessing,
+                              maxLines: null,
+                              textInputAction: TextInputAction.newline,
+                              onTapOutside: (event) {
+                                _focusNode.unfocus();
+                              },
+                              decoration: InputDecoration(
+                                hintText:
+                                    state.isProcessing
+                                        ? 'Processing your question...'
+                                        : 'Ask me anything...',
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 16.0,
+                                ),
+                                hintStyle: Theme.of(
+                                  context,
+                                ).textTheme.bodyLarge?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant
+                                      .withOpacity(0.7),
+                                ),
+                              ),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                           ),
                         ),
                       ),
@@ -181,18 +215,27 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               child: GestureDetector(
-                                onTapDown: (_) => _animationController.forward(),
+                                onTapDown:
+                                    (_) => _animationController.forward(),
                                 onTapUp: (_) => _animationController.reverse(),
-                                onTapCancel: () => _animationController.reverse(),
+                                onTapCancel:
+                                    () => _animationController.reverse(),
                                 child: Material(
                                   color:
-                                      value.text.trim().isNotEmpty && !state.isProcessing
-                                          ? Theme.of(context).colorScheme.primary
-                                          : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                                      value.text.trim().isNotEmpty &&
+                                              !state.isProcessing
+                                          ? Theme.of(
+                                            context,
+                                          ).colorScheme.primary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .outline
+                                              .withOpacity(0.3),
                                   borderRadius: BorderRadius.circular(20),
                                   child: InkWell(
                                     onTap:
-                                        value.text.trim().isNotEmpty && !state.isProcessing
+                                        value.text.trim().isNotEmpty &&
+                                                !state.isProcessing
                                             ? () => _submitQuery(context)
                                             : null,
                                     borderRadius: BorderRadius.circular(20),
@@ -207,19 +250,27 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
                                                 height: 20,
                                                 child: CircularProgressIndicator(
                                                   strokeWidth: 2,
-                                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                                    Theme.of(context).colorScheme.onPrimary,
-                                                  ),
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(
+                                                        Theme.of(
+                                                          context,
+                                                        ).colorScheme.onPrimary,
+                                                      ),
                                                 ),
                                               )
                                               : Icon(
                                                 Icons.send_rounded,
                                                 color:
                                                     value.text.trim().isNotEmpty
-                                                        ? Theme.of(context).colorScheme.onPrimary
-                                                        : Theme.of(
+                                                        ? Theme.of(
                                                           context,
-                                                        ).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                                                        ).colorScheme.onPrimary
+                                                        : Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant
+                                                            .withOpacity(0.5),
                                                 size: 20,
                                               ),
                                     ),
@@ -246,15 +297,17 @@ class _QueryInputWidgetState extends State<QueryInputWidget> with TickerProvider
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Analyzing your question...',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),

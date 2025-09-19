@@ -12,7 +12,7 @@ class ENV {
   String get baseURL {
     switch (_environment) {
       case Environment.development:
-        return 'https://agentic-rag-backend-production.up.railway.app';
+        return 'https://ce6466f1b589.ngrok-free.app';
       case Environment.staging:
         return 'https://staging-api.yourapp.com';
       case Environment.production:

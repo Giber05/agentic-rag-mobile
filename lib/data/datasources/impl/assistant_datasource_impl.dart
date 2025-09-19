@@ -22,6 +22,7 @@ class AssistantDatasourceImpl implements AssistantDatasource {
     // Prepare request data
     final requestData = {
       'query': question,
+      'source': 'jira&confluence',
       if (conversationHistory != null && conversationHistory.isNotEmpty) 'conversation_history': conversationHistory,
       if (options != null)
         'pipeline_config': {
